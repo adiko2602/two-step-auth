@@ -39,7 +39,12 @@ export default function DashboardSidebar({ props }) {
       </Flex>
       <List w="100%">
         {itemsForList.map((item) => (
-          <ListItem p="1rem" _hover={{ bgColor: "gray.100" }} cursor="pointer">
+          <ListItem
+            key={item}
+            p="1rem"
+            _hover={{ bgColor: "gray.100" }}
+            cursor="pointer"
+          >
             {item}
           </ListItem>
         ))}

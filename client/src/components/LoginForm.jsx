@@ -2,23 +2,47 @@ import {
   Button,
   Flex,
   FormControl,
+  FormErrorMessage,
   FormLabel,
   Heading,
   Input,
 } from "@chakra-ui/react";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router";
+import Validator from "../helpers/validator";
+import { Login } from "../services/Auth";
 
 export default function LoginForm({ props }) {
-  const login = useRef(null);
+  const [errors, setErrors] = useState({ email: "", password: "" });
+
+  const email = useRef(null);
   const password = useRef(null);
   const navigate = useNavigate();
+  const validator = new Validator();
 
-  function handleLogin(e) {
+  async function handleLogin(e) {
     e.preventDefault();
-    console.log(login.current.value);
-    console.log(password.current.value);
+    let tempErrors = { email: "", password: "" };
+
+    if (!validator.email(email.current.value)) {
+      tempErrors = { ...tempErrors, email: "Nieprawidłowy adres email" };
+      setErrors(tempErrors);
+      return;
+    }
+    if (!validator.password(password.current.value)) {
+      tempErrors = {
+        ...tempErrors,
+        password: "Hasło musi zawierać minimum 8 znaków",
+      };
+      setErrors(tempErrors);
+      return;
+    }
+    setErrors(tempErrors);
+
+    const res = await Login(email.current.value, password.current.value);
+    console.log(res);
+
     navigate("token");
   }
 
@@ -34,13 +58,15 @@ export default function LoginForm({ props }) {
       borderColor="gray.200"
     >
       <Heading size="md">Zaloguj się</Heading>
-      <FormControl id="email">
+      <FormControl id="email" isInvalid={errors.email.length > 0}>
         <FormLabel>Email</FormLabel>
-        <Input ref={login} placeholder="Adres email" type="email" />
+        <Input ref={email} placeholder="Adres email" type="email" />
+        <FormErrorMessage>{errors.email}</FormErrorMessage>
       </FormControl>
-      <FormControl id="password">
+      <FormControl id="password" isInvalid={errors.password.length > 0}>
         <FormLabel>Hasło</FormLabel>
         <Input ref={password} placeholder="Hasło" type="password" />
+        <FormErrorMessage>{errors.password}</FormErrorMessage>
       </FormControl>
       <Button type="button" colorScheme="green" onClick={handleLogin}>
         Zaloguj

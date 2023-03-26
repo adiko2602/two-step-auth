@@ -2,26 +2,61 @@ import {
   Button,
   Flex,
   FormControl,
+  FormErrorMessage,
   FormLabel,
   Heading,
   Input,
 } from "@chakra-ui/react";
 
-import { useRef } from "react";
+import Validator from "../helpers/Validator";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router";
+import { Register } from "../services/Auth";
 
 export default function RegisterForm({ props }) {
   const navigate = useNavigate();
+  const validator = new Validator();
 
-  const login = useRef(null);
+  const [errors, setErrors] = useState({
+    email: "",
+    password: "",
+    passwordReplay: "",
+  });
+  const email = useRef(null);
   const password = useRef(null);
   const passwordReplay = useRef(null);
 
-  function handleRegister(e) {
+  async function handleRegister(e) {
     e.preventDefault();
-    console.log(login.current.value);
-    console.log(password.current.value);
-    console.log(passwordReplay.current.value);
+    let tempErrors = { email: "", password: "", passwordReplay: "" };
+
+    if (!validator.email(email.current.value)) {
+      tempErrors = { ...tempErrors, email: "Nieprawidłowy adres email" };
+      setErrors(tempErrors);
+      return;
+    }
+    if (!validator.password(password.current.value)) {
+      tempErrors = {
+        ...tempErrors,
+        password: "Hasło musi zawierać minimum 8 znaków",
+      };
+      setErrors(tempErrors);
+      return;
+    }
+    if (
+      !validator.passwordEqual(
+        password.current.value,
+        passwordReplay.current.value
+      )
+    ) {
+      tempErrors = { ...tempErrors, passwordReplay: "Hasła nie są takie same" };
+      setErrors(tempErrors);
+      return;
+    }
+    setErrors(tempErrors);
+
+    const res = await Register(email.current.value, password.current.value);
+    console.log(res);
 
     navigate("/login");
   }
@@ -38,22 +73,27 @@ export default function RegisterForm({ props }) {
       borderColor="gray.200"
     >
       <Heading size="md">Zarejestruj się</Heading>
-      <FormControl id="email">
+      <FormControl id="email" isInvalid={errors.email.length > 0}>
         <FormLabel>Email</FormLabel>
-        <Input ref={login} placeholder="Adres email" type="email" />
+        <Input ref={email} placeholder="Adres email" type="email" />
+        <FormErrorMessage>{errors.email}</FormErrorMessage>
       </FormControl>
-      <FormControl id="password">
+      <FormControl id="password" isInvalid={errors.password.length > 0}>
         <FormLabel>Hasło</FormLabel>
         <Input ref={password} placeholder="Hasło" type="password" />
+        <FormErrorMessage>{errors.password}</FormErrorMessage>
       </FormControl>
-
-      <FormControl id="password-replay">
+      <FormControl
+        id="password-replay"
+        isInvalid={errors.passwordReplay.length > 0}
+      >
         <FormLabel>Powtórz hasło</FormLabel>
         <Input
           ref={passwordReplay}
           placeholder="Powtórz hasło"
           type="password"
         />
+        <FormErrorMessage>{errors.passwordReplay}</FormErrorMessage>
       </FormControl>
       <Button type="button" colorScheme="green" onClick={handleRegister}>
         Zarejestruj
