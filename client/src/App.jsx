@@ -1,35 +1,42 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Flex, Button, Heading, Text, Link } from "@chakra-ui/react";
+import { Link as LinkRouter } from "react-router-dom";
 
-function App() {
-  const [count, setCount] = useState(0)
-
+export default function App() {
   return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
-  )
-}
+    <Flex align="center" justify="center" minH="100svh">
+      <Flex
+        maxW="500px"
+        w="100%"
+        rounded="1rem"
+        p="2rem"
+        direction="column"
+        gap="2rem"
+        border="1px"
+        borderColor="gray.200"
+      >
+        <Heading size="lg">
+          Witaj w aplikacji, która prezentuje działanie dwuetapowego logowania.
+        </Heading>
+        <Text>Spróbuj się zalogować lub zarejestrować.</Text>
+        <Flex gap="2rem">
+          <Link as={LinkRouter} to="/login" w="100%">
+            <Button w="100%" colorScheme="green" variant="solid" type="button">
+              Zaloguj
+            </Button>
+          </Link>
 
-export default App
+          <Link as={LinkRouter} to="/register" w="100%">
+            <Button
+              w="100%"
+              colorScheme="green"
+              variant="outline"
+              type="button"
+            >
+              Zarejestruj
+            </Button>
+          </Link>
+        </Flex>
+      </Flex>
+    </Flex>
+  );
+}
