@@ -5,7 +5,7 @@ const verifyToken = (req, res, next) => {
     const authorizationHeader = req.headers.authorization || req.headers.Authorization;
 
     if (!authorizationHeader?.startsWith('Bearer ')) {
-        return res.status(400).json(sendResponse(false, 'Access denied'));
+        return res.status(400).json(sendResponse(false, 'access-denied'));
     }
 
     jwt.verify(

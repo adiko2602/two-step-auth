@@ -3,7 +3,6 @@ const sendResponse = require('../utils/send-response')
 const generateTOTP = require('../services/totp/generator')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-const mongoose = require('mongoose')
 const User = require('../models/user-model')
 
 const SALT_ROUNDS = 10;
@@ -19,7 +18,7 @@ const login = async (req, res) => {
     const user = await User.findOne({ email: email })
 
     if (!user || !await bcrypt.compare(password, user?.password)) {
-        return res.status(400).json(sendResponse(false, 'Invalid credentials'))
+        return res.status(400).json(sendResponse(false, 'invalid-credentials'))
     }
 
     const tempJWT = jwt.sign(
@@ -28,7 +27,7 @@ const login = async (req, res) => {
         { expiresIn: TEMP_JWT_EXPIRiATION_TIME }
     );
     
-    res.status(200).json(sendResponse(true, 'User logged in', { tempJWT: tempJWT }))
+    res.status(200).json(sendResponse(true, 'login-success', { tempJWT: tempJWT }))
 }
 
 const register = async (req, res) => {
@@ -39,7 +38,7 @@ const register = async (req, res) => {
 
     const user = await User.findOne({ email: email })
     if (user) {
-        return res.status(400).json(sendResponse(false, `Account with email '${user?.email}' already exists`))
+        return res.status(400).json(sendResponse(false, 'email-already-in-use'))
     }
 
     const hashedPassword = await bcrypt.hash(password, await bcrypt.genSalt(SALT_ROUNDS))
@@ -53,7 +52,7 @@ const register = async (req, res) => {
 
     await createdUser.save()
 
-    res.status(200).json(sendResponse(true, `Created new account`, { userSecret: secret }))
+    res.status(200).json(sendResponse(true, 'register-success', { userSecret: secret }))
 }
 
 const verifyTOTP = async (req, res) => {
@@ -71,9 +70,9 @@ const verifyTOTP = async (req, res) => {
             { expiresIn: JWT_EXPIRiATION_TIME }
         );
 
-        res.status(200).json(sendResponse(true, 'TOTP verification successful', { JWT: JWT }));
+        res.status(200).json(sendResponse(true, 'totp-verification-success', { JWT: JWT }));
     } else {
-        res.status(400).json(sendResponse(false, 'Invalid TOTP token'));
+        res.status(400).json(sendResponse(false, 'totp-verification-fail'));
     }
 }
 
