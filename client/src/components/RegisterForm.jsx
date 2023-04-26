@@ -54,11 +54,11 @@ export default function RegisterForm({ props }) {
       return;
     }
     setErrors(tempErrors);
-
+    
     const res = await Register(email.current.value, password.current.value);
     console.log(res);
 
-    navigate("/login");
+    navigate("/display-qr", { state: { otpauth_url: res.content.otpauth_url } });
   }
 
   return (

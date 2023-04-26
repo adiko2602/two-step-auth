@@ -1,4 +1,4 @@
-const INITIAL_COUNT_DOWN = 5;
+const INITIAL_COUNT_DOWN = 180; // time that temp jwt is valid for
 
 import {
   Button,
@@ -11,24 +11,39 @@ import {
   Text,
 } from "@chakra-ui/react";
 
-import { Link as LinkRouter, useNavigate } from "react-router-dom";
+import { Link as LinkRouter, useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
+import { Token } from "../services/Auth";
 
 export default function LoginTokenForm({ props }) {
   const [countdown, setCountdown] = useState(INITIAL_COUNT_DOWN);
   const [errors, setErrors] = useState({
     token: "",
     countdown: "",
+    invalidTotp: "",
   });
 
   const navigate = useNavigate();
   const token = useRef(null);
+  const location = useLocation();
+  const [jwt] = useState(location.state.jwt);
 
-  function handleToken(e) {
+  async function handleToken(e) {
     e.preventDefault();
     console.log(token.current.value);
 
-    navigate("/dashboard");
+    const res = await Token(token.current.value, jwt);
+    console.log(res);
+
+    if (res.status == false) {
+      setErrors({
+        ...errors,
+        invalidTotp: "Niepoprawny kod",
+      });
+      return;
+    } else {
+      navigate("/dashboard");
+    }
   }
 
   function handleCountdown(interval) {
@@ -96,6 +111,7 @@ export default function LoginTokenForm({ props }) {
       >
         Zaloguj
       </Button>
+      {errors.invalidTotp != '' ? <Flex color='red'>{errors.invalidTotp}</Flex> : ''}
     </Flex>
   );
 }
