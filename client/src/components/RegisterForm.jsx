@@ -58,7 +58,7 @@ export default function RegisterForm({ props }) {
     const res = await Register(email.current.value, password.current.value);
     console.log(res);
 
-    navigate("/display-qr", { state: { userSecret: res.content.userSecret } });
+    navigate("/display-qr", { state: { otpauth_url: res.content.otpauth_url } });
   }
 
   return (

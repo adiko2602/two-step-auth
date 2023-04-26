@@ -10,8 +10,8 @@ const verifyTotp = (totp, sharedSecret) => {
 
 const generateUserSecret = () => {
     const secret = speakeasy.generateSecret()
-
-    return secret.base32
+    
+    return secret
 }
 
 module.exports = {verifyTotp, generateUserSecret};

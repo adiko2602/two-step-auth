@@ -2,7 +2,7 @@ import { Flex, Grid, GridItem } from "@chakra-ui/react";
 import DashboardMain from "../components/DashboardMain";
 import DashboardSidebar from "../components/DashboardSidebar";
 
-export default function Login({ props }) {
+export default function Dashboard({ props }) {
   return (
     <Flex w="100%" minH="100svh">
       <Grid

@@ -17,17 +17,16 @@ export default function DisplayQRMain({ props }) {
     const location = useLocation();
     const navigate = useNavigate();
 
-    const [userSecret] = useState(location.state.userSecret);
+    const [otpauth_url] = useState(location.state.otpauth_url);
     const canvasRef = useRef();
 
     useEffect(() => {
         QRCode.toCanvas(
             canvasRef.current,
-            userSecret || " ",
+            otpauth_url || " ",
             (error) => error && console.error(error)
         );
-        console.log(userSecret);
-    }, [userSecret]);
+    }, [otpauth_url]);
 
     function handleRoute() {
         navigate('/login')
@@ -51,7 +50,7 @@ export default function DisplayQRMain({ props }) {
         <Divider />
         
         <Container ><Text as='b'>Lub wprowadź kod ręcznie</Text></Container>
-        <Container >{userSecret}</Container>
+        <Container >{otpauth_url}</Container>
         <Button type="button" colorScheme="green" onClick={handleRoute}>
         Przejdź do logowania
       </Button>

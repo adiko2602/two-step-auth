@@ -46,12 +46,12 @@ const register = async (req, res) => {
     const createdUser = new User({
         email: email,
         password: hashedPassword,
-        secret: secret,
+        secret: secret.base32,
     })
 
     await createdUser.save()
 
-    res.status(200).json(sendResponse(true, 'register-success', { userSecret: secret }))
+    res.status(200).json(sendResponse(true, 'register-success', { otpauth_url: secret.otpauth_url }))
 }
 
 const verifyTOTP = async (req, res) => {
@@ -59,12 +59,6 @@ const verifyTOTP = async (req, res) => {
 
     const user = await User.findById(req.userId);
     const sharedSecret = user.secret;
-
-    // const verified = speakeasy.totp.verify({
-    //     secret: sharedSecret,
-    //     encoding: 'base32',
-    //     token: totp
-    // });
 
     const verified = totpService.verifyTotp(totp, sharedSecret);
 
