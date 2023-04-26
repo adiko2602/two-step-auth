@@ -4,6 +4,7 @@ import Register from "./pages/Register";
 import LoginToken from "./pages/LoginToken";
 import LoginOutlet from "./outlets/LoginOutlet";
 import Dashboard from "./pages/Dashboard";
+import DisplayQR from "./pages/DisplayQR";
 
 export default [
   {
@@ -32,4 +33,8 @@ export default [
     path: "/dashboard",
     element: <Dashboard />,
   },
+  {
+    path: "/display-qr",
+    element: <DisplayQR/>,
+  }
 ];

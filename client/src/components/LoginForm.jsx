@@ -6,6 +6,7 @@ import {
   FormLabel,
   Heading,
   Input,
+  Text,
 } from "@chakra-ui/react";
 
 import { useRef, useState } from "react";
@@ -15,7 +16,7 @@ import Validator from "../helpers/Validator";
 import { Login } from "../services/Auth";
 
 export default function LoginForm({ props }) {
-  const [errors, setErrors] = useState({ email: "", password: "" });
+  const [errors, setErrors] = useState({ email: "", password: "", invalidCredentials: "" });
 
   const email = useRef(null);
   const password = useRef(null);
@@ -44,7 +45,15 @@ export default function LoginForm({ props }) {
     const res = await Login(email.current.value, password.current.value);
     console.log(res);
 
-    navigate("token");
+    if (res.status == false) {
+      tempErrors = {
+        ...tempErrors,
+        invalidCredentials: "Niepoprawne dane logowania",
+      };
+      setErrors(tempErrors);
+    } else {
+      navigate("token", { state: { jwt: res.content.tempJwt } });
+    }
   }
 
   return (
@@ -72,6 +81,7 @@ export default function LoginForm({ props }) {
       <Button type="button" colorScheme="green" onClick={handleLogin}>
         Zaloguj
       </Button>
+      {errors.invalidCredentials != '' ? <Flex color='red'>{errors.invalidCredentials}</Flex> : ''}
     </Flex>
   );
 }
